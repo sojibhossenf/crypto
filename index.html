@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#071827" />
+    <title>Crypto Payment Address</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #071827;
+        --bg-deep: #05111d;
+        --panel: #102840;
+        --panel-2: #0b2034;
+        --line: #315578;
+        --gold: #f3ba2f;
+        --gold-light: #ffd84d;
+        --text: #f6f8fb;
+        --muted: #b6c7df;
+        --green: #26a17b;
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        font-family: "Exo 2", system-ui, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(
+            circle at 12% 8%,
+            rgba(243, 186, 47, 0.12),
+            transparent 26%
+          ),
+          radial-gradient(
+            circle at 84% 12%,
+            rgba(38, 161, 123, 0.1),
+            transparent 22%
+          ),
+          linear-gradient(145deg, #061421 0%, #081a2b 52%, #061421 100%);
+        overflow-x: hidden;
+
+        /* Nothing on the page can be selected by default */
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        width: 260px;
+        height: 260px;
+        border: 24px solid rgba(243, 186, 47, 0.1);
+        transform: rotate(45deg);
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      body::before {
+        left: -170px;
+        top: -170px;
+      }
+      body::after {
+        right: -170px;
+        bottom: -170px;
+      }
+
+      button,
+      img,
+      svg {
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-user-drag: none;
+      }
+
+      .page {
+        width: min(980px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: clamp(28px, 5vw, 54px) 0 36px;
+      }
+
+      .brand-row {
+        display: grid;
+        grid-template-columns: 1fr 1px 1fr 1px 1fr;
+        align-items: center;
+        gap: clamp(16px, 2.8vw, 28px);
+        margin-bottom: clamp(28px, 4vw, 40px);
+      }
+
+      .divider {
+        width: 1px;
+        height: 150px;
+        background: linear-gradient(transparent, #9db2c9, transparent);
+      }
+
+      .brand {
+        text-align: center;
+        min-width: 0;
+      }
+
+      .brand img {
+        display: block;
+        margin: 0 auto 14px;
+        width: 104px;
+        height: 104px;
+        object-fit: contain;
+        filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.25));
+        pointer-events: none;
+      }
+
+      .brand.usdt img {
+        background: var(--green);
+        border-radius: 50%;
+        padding: 17px;
+      }
+
+      .brand-title {
+        font-size: clamp(24px, 4vw, 47px);
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        line-height: 1.08;
+        overflow-wrap: anywhere;
+      }
+
+      .brand.binance .brand-title,
+      .brand.bnb .brand-title {
+        color: var(--gold);
+      }
+
+      .brand-sub {
+        margin-top: 6px;
+        font-size: clamp(16px, 2.2vw, 27px);
+        color: var(--muted);
+      }
+
+      .brand.bnb .brand-sub {
+        color: var(--gold-light);
+      }
+
+      .card {
+        background: linear-gradient(
+          180deg,
+          rgba(18, 44, 69, 0.9),
+          rgba(10, 29, 47, 0.94)
+        );
+        border: 2px solid rgba(64, 99, 132, 0.62);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(8px);
+      }
+
+      .hero {
+        padding: clamp(22px, 4vw, 32px);
+        text-align: center;
+        margin-bottom: 28px;
+      }
+
+      .hero h1 {
+        margin: 0 0 13px;
+        font-size: clamp(26px, 5vw, 43px);
+        letter-spacing: 0.14em;
+        font-weight: 800;
+      }
+
+      .hero p {
+        margin: 0;
+        color: var(--muted);
+        font-size: clamp(16px, 2.6vw, 25px);
+        line-height: 1.55;
+      }
+
+      .hero strong {
+        color: #fff;
+      }
+
+      .payment-card {
+        padding: clamp(20px, 4vw, 34px);
+        margin-bottom: 32px;
+      }
+
+      .info-row {
+        display: grid;
+        grid-template-columns: 68px minmax(0, 1fr);
+        gap: 20px;
+        align-items: center;
+      }
+
+      .icon-box {
+        width: 58px;
+        height: 58px;
+        display: grid;
+        place-items: center;
+        color: var(--gold);
+      }
+
+      .icon-box svg {
+        width: 44px;
+        height: 44px;
+        stroke: currentColor;
+      }
+
+      .label {
+        color: var(--muted);
+        font-size: 19px;
+        margin-bottom: 4px;
+      }
+
+      .value {
+        font-size: clamp(19px, 3vw, 31px);
+        font-weight: 700;
+        overflow-wrap: anywhere;
+      }
+
+      .rule {
+        height: 1px;
+        background: #325575;
+        margin: 24px 0;
+      }
+
+      .address-wrap {
+        margin-top: 18px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      /* ONLY the wallet address is selectable */
+      .address {
+        min-width: 0;
+        border: 1px solid #315374;
+        background: linear-gradient(180deg, #193651, #122b43);
+        border-radius: 16px;
+        padding: 20px;
+        font-family: "Exo 2", system-ui, sans-serif;
+        letter-spacing: 0.075em;
+        font-size: clamp(15px, 2.2vw, 22px);
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+        cursor: pointer;
+        outline: none;
+
+        user-select: text;
+        -webkit-user-select: text;
+        -moz-user-select: text;
+      }
+
+      .address::selection {
+        background: rgba(243, 186, 47, 0.85);
+        color: #071827;
+      }
+
+      .address:focus-visible {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 4px rgba(243, 186, 47, 0.14);
+      }
+
+      .copy-btn {
+        border: 0;
+        border-radius: 16px;
+        padding: 0 26px;
+        min-width: 140px;
+        min-height: 64px;
+        background: linear-gradient(180deg, var(--gold-light), var(--gold));
+        color: #08203a;
+        font-family: "Exo 2", sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 10px 24px rgba(243, 186, 47, 0.18);
+        transition:
+          transform 0.2s ease,
+          filter 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .copy-btn:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.04);
+      }
+
+      .copy-btn:active {
+        transform: scale(0.98);
+      }
+
+      .copy-btn:focus-visible {
+        outline: 3px solid #fff;
+        outline-offset: 3px;
+      }
+
+      .warning {
+        padding: clamp(22px, 4vw, 34px);
+        margin-bottom: 34px;
+      }
+
+      .warning-head {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 16px;
+      }
+
+      .warn-icon {
+        flex: 0 0 auto;
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(180deg, var(--gold-light), var(--gold));
+        color: #071827;
+        font-size: 34px;
+        font-weight: 900;
+      }
+
+      .warning h2 {
+        margin: 0;
+        color: var(--gold-light);
+        font-size: 30px;
+      }
+
+      .warning ul {
+        margin: 0 0 0 78px;
+        padding-left: 20px;
+        font-size: 19px;
+        line-height: 1.8;
+        color: #f1f5fa;
+      }
+
+      .warning b {
+        color: var(--gold-light);
+      }
+
+      .footer {
+        text-align: center;
+        color: #b9cae3;
+        padding: 0 10px 10px;
+      }
+
+      .footer .thanks {
+        font-size: clamp(27px, 4vw, 34px);
+        font-style: italic;
+        margin-bottom: 4px;
+      }
+
+      .footer .support {
+        font-size: 14px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: max(22px, env(safe-area-inset-bottom));
+        transform: translate(-50%, 20px);
+        width: max-content;
+        max-width: calc(100% - 32px);
+        text-align: center;
+        background: #102a42;
+        color: #fff;
+        border: 1px solid #466b8f;
+        border-radius: 14px;
+        padding: 12px 18px;
+        font-weight: 700;
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.25s ease;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      /* Tablet */
+      @media (max-width: 760px) {
+        .page {
+          width: min(100% - 24px, 680px);
+          padding-top: 26px;
+        }
+
+        .brand-row {
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 12px;
+        }
+
+        .divider {
+          display: none;
+        }
+
+        .brand img {
+          width: 72px;
+          height: 72px;
+          margin-bottom: 10px;
+        }
+
+        .brand.usdt img {
+          padding: 12px;
+        }
+
+        .brand-title {
+          font-size: clamp(17px, 3.2vw, 25px);
+        }
+        .brand-sub {
+          font-size: clamp(12px, 2.3vw, 16px);
+        }
+
+        .hero h1 {
+          letter-spacing: 0.09em;
+        }
+
+        .info-row {
+          grid-template-columns: 52px minmax(0, 1fr);
+          gap: 14px;
+        }
+
+        .icon-box {
+          width: 48px;
+          height: 48px;
+        }
+
+        .icon-box svg {
+          width: 36px;
+          height: 36px;
+        }
+
+        .label {
+          font-size: 16px;
+        }
+
+        .address-wrap {
+          grid-template-columns: 1fr;
+        }
+
+        .copy-btn {
+          width: 100%;
+          min-height: 58px;
+        }
+
+        .warning ul {
+          margin-left: 18px;
+          font-size: 16px;
+        }
+
+        .warning-head {
+          gap: 12px;
+        }
+
+        .warn-icon {
+          width: 48px;
+          height: 48px;
+          font-size: 28px;
+        }
+
+        .warning h2 {
+          font-size: 25px;
+        }
+      }
+
+      /* Phone */
+      @media (max-width: 480px) {
+        body::before,
+        body::after {
+          width: 180px;
+          height: 180px;
+          border-width: 16px;
+        }
+
+        .page {
+          width: calc(100% - 16px);
+          padding: 18px 0 24px;
+        }
+
+        .card {
+          border-radius: 22px;
+        }
+
+        .brand-row {
+          gap: 5px;
+          margin-bottom: 24px;
+        }
+
+        .brand img {
+          width: 54px;
+          height: 54px;
+        }
+
+        .brand.usdt img {
+          padding: 9px;
+        }
+
+        .brand-title {
+          font-size: 14px;
+          letter-spacing: 0.01em;
+        }
+
+        .brand.bnb .brand-title {
+          font-size: 12px;
+        }
+
+        .brand-sub {
+          font-size: 11px;
+        }
+
+        .hero {
+          padding: 20px 14px;
+          margin-bottom: 18px;
+        }
+
+        .hero h1 {
+          font-size: 23px;
+          letter-spacing: 0.055em;
+        }
+
+        .hero p {
+          font-size: 15px;
+        }
+
+        .payment-card {
+          padding: 18px 14px;
+          margin-bottom: 20px;
+        }
+
+        .info-row {
+          grid-template-columns: 42px minmax(0, 1fr);
+          gap: 10px;
+        }
+
+        .icon-box {
+          width: 42px;
+          height: 42px;
+        }
+
+        .icon-box svg {
+          width: 30px;
+          height: 30px;
+        }
+
+        .value {
+          font-size: 18px;
+        }
+
+        .address {
+          padding: 16px 14px;
+          font-size: 14px;
+          border-radius: 14px;
+        }
+
+        .copy-btn {
+          border-radius: 14px;
+          min-height: 54px;
+          font-size: 20px;
+        }
+
+        .warning {
+          padding: 20px 16px;
+          margin-bottom: 24px;
+        }
+
+        .warning ul {
+          margin-left: 0;
+          padding-left: 22px;
+          font-size: 15px;
+          line-height: 1.65;
+        }
+
+        .footer .support {
+          font-size: 11px;
+          letter-spacing: 0.2em;
+        }
+      }
+
+      /* Reduce motion for users who prefer it */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page">
+      <section class="brand-row" aria-label="Supported crypto brands">
+        <div class="brand binance">
+          <img
+            src="https://cdn.simpleicons.org/binance/F3BA2F"
+            alt="Binance logo"
+          />
+          <div class="brand-title">BINANCE</div>
+        </div>
+
+        <div class="divider" aria-hidden="true"></div>
+
+        <div class="brand usdt">
+          <img
+            src="https://cdn.simpleicons.org/tether/FFFFFF"
+            alt="Tether USDT logo"
+          />
+          <div class="brand-title">USDT</div>
+          <div class="brand-sub">(Tether)</div>
+        </div>
+
+        <div class="divider" aria-hidden="true"></div>
+
+        <div class="brand bnb">
+          <img
+            src="https://cdn.simpleicons.org/bnbchain/F3BA2F"
+            alt="BNB Smart Chain logo"
+          />
+          <div class="brand-title">BNB SMART CHAIN</div>
+          <div class="brand-sub">(BEP20)</div>
+        </div>
+      </section>
+
+      <section class="card hero">
+        <h1>CRYPTO PAYMENT ADDRESS</h1>
+        <p>
+          Send only <strong>USDT</strong> via
+          <strong>BSC – BNB Smart Chain (BEP20)</strong>
+        </p>
+      </section>
+
+      <section class="card payment-card">
+        <div class="info-row">
+          <div class="icon-box" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M10.6 13.4a4 4 0 0 0 5.66 0l2.34-2.34a4 4 0 1 0-5.66-5.66L11.6 6.74"
+              />
+              <path
+                d="M13.4 10.6a4 4 0 0 0-5.66 0L5.4 12.94a4 4 0 1 0 5.66 5.66l1.34-1.34"
+              />
+            </svg>
+          </div>
+          <div>
+            <div class="label">Network</div>
+            <div class="value" id="networkText"></div>
+          </div>
+        </div>
+
+        <div class="rule"></div>
+
+        <div class="info-row">
+          <div class="icon-box" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M4 7h14a2 2 0 0 1 2 2v10H6a2 2 0 0 1-2-2V7Z" />
+              <path d="M4 7V5a2 2 0 0 1 2-2h11v4" />
+              <path d="M16 12h5v4h-5a2 2 0 1 1 0-4Z" />
+            </svg>
+          </div>
+          <div>
+            <div class="label">Wallet Address</div>
+          </div>
+        </div>
+
+        <div class="address-wrap">
+          <div
+            class="address"
+            id="walletAddress"
+            role="button"
+            tabindex="0"
+            title="Click or tap to copy address"
+            aria-label="Wallet address. Click to copy."
+          ></div>
+
+          <button
+            class="copy-btn"
+            id="copyBtn"
+            type="button"
+            aria-label="Copy wallet address"
+          >
+            ▣ Copy
+          </button>
+        </div>
+      </section>
+
+      <section class="card warning">
+        <div class="warning-head">
+          <div class="warn-icon" aria-hidden="true">!</div>
+          <h2>Important:</h2>
+        </div>
+
+        <ul>
+          <li>
+            Only send <strong>USDT</strong> via
+            <b>BSC – BNB Smart Chain (BEP20)</b>.
+          </li>
+          <li>Do not use other networks (ERC20, TRC20, etc.).</li>
+          <li>
+            Sending via the wrong network may result in permanent loss of funds.
+          </li>
+        </ul>
+      </section>
+
+      <footer class="footer">
+        <div class="thanks">Thank you ♡</div>
+        <div class="support">For your support</div>
+      </footer>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      Address copied!
+    </div>
+
+    <script>
+      /* =====================================
+   EDIT ONLY THESE VALUES
+===================================== */
+      const CONFIG = {
+        walletAddress: "0x0a2572c00fb80221d442ec32f0ac5bae6e18c785",
+        network: "BSC – BNB Smart Chain (BEP20)",
+      };
+
+      /* =====================================
+   PAGE LOGIC
+===================================== */
+      const walletAddress = document.getElementById("walletAddress");
+      const networkText = document.getElementById("networkText");
+      const copyBtn = document.getElementById("copyBtn");
+      const toast = document.getElementById("toast");
+
+      walletAddress.textContent = CONFIG.walletAddress;
+      networkText.textContent = CONFIG.network;
+
+      async function copyWallet() {
+        try {
+          await navigator.clipboard.writeText(CONFIG.walletAddress);
+          showCopied();
+        } catch (error) {
+          const temp = document.createElement("textarea");
+          temp.value = CONFIG.walletAddress;
+          temp.setAttribute("readonly", "");
+          temp.style.position = "fixed";
+          temp.style.left = "-9999px";
+          temp.style.opacity = "0";
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand("copy");
+          temp.remove();
+          showCopied();
+        }
+      }
+
+      function showCopied() {
+        copyBtn.textContent = "✓ Copied";
+        toast.classList.add("show");
+
+        clearTimeout(window.__toastTimer);
+
+        window.__toastTimer = setTimeout(() => {
+          toast.classList.remove("show");
+          copyBtn.textContent = "▣ Copy";
+        }, 1800);
+      }
+
+      copyBtn.addEventListener("click", copyWallet);
+
+      /* Clicking/tapping the address copies it */
+      walletAddress.addEventListener("click", copyWallet);
+
+      /* Keyboard accessibility */
+      walletAddress.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          copyWallet();
+        }
+      });
+    </script>
+  </body>
+</html>
